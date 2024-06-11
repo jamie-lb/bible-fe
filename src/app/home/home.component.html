@@ -1,0 +1,36 @@
+<div class="errorMessage" *ngIf="errorMessage">
+    {{ errorMessage }}
+</div>
+<div class="input">
+    <div class="inputWrapper">
+        <label class="descriptionLabel">Chapter Number Input:</label>
+        <input [disabled]="isBusy" type="number" [(ngModel)]="chapterNumber" (ngModelChange)="chapterNumberChanged()" />
+    </div>
+    <div class="inputWrapper">
+        <label class="descriptionLabel">Verse Number Input:</label>
+        <input [disabled]="isBusy" type="number" [(ngModel)]="verseNumber" (ngModelChange)="loadVerseDetail()" />
+    </div>
+</div>
+<div class="output" *ngIf="verse">
+    <div>
+        <label class="descriptionLabel">Book:</label>
+        <label>{{ verse.book?.title }}</label>
+    </div>
+    <div>
+        <label class="descriptionLabel">Version:</label>
+        <label>{{ verse.version?.versionName }}</label>
+    </div>
+    <div>
+        <label class="descriptionLabel">Chapter:</label>
+        <label>{{ verse.chapterNumber }}</label>
+    </div>
+    <div>
+        <label class="descriptionLabel">Verse:</label>
+        <label>{{ verse.verseNumber }}</label>
+    </div>
+    <div>
+        <label class="descriptionLabel">Text:</label>
+        <label>{{ verse.verseText }}</label>
+    </div>
+</div>
+
