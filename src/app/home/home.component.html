@@ -3,12 +3,28 @@
 </div>
 <div class="input">
     <div class="inputWrapper">
-        <label class="descriptionLabel">Chapter Number Input:</label>
-        <input [disabled]="isBusy" type="number" [(ngModel)]="chapterNumber" (ngModelChange)="chapterNumberChanged()" />
+        <label class="descriptionLabel">Version:</label>
+        <select [(ngModel)]="selectedVersionCode" [disabled]="isBusy" (ngModelChange)="selectedVersionChanged()">
+            <option *ngFor="let version of versions" [value]="version.versionCode">{{ version.versionName }}</option>
+        </select>
     </div>
     <div class="inputWrapper">
-        <label class="descriptionLabel">Verse Number Input:</label>
-        <input [disabled]="isBusy" type="number" [(ngModel)]="verseNumber" (ngModelChange)="loadVerseDetail()" />
+        <label class="descriptionLabel">Book:</label>
+        <select [(ngModel)]="selectedBookId" [disabled]="isBusy" (ngModelChange)="selectedBookChanged()">
+            <option *ngFor="let book of books" [value]="book.id">{{ book.title }}</option>
+        </select>
+    </div>
+    <div class="inputWrapper">
+        <label class="descriptionLabel">Chapter:</label>
+        <select [(ngModel)]="selectedChapterNumber" [disabled]="isBusy" (ngModelChange)="chapterNumberChanged()">
+            <option *ngFor="let chapter of bookChapters" [value]="chapter">{{ chapter }}</option>
+        </select>
+    </div>
+    <div class="inputWrapper">
+        <label class="descriptionLabel">Verse:</label>
+        <select [(ngModel)]="selectedVerseNumber" [disabled]="isBusy" (ngModelChange)="verseNumberChanged()">
+            <option *ngFor="let verseNumber of chapterVerses" [value]="verseNumber">{{ verseNumber }}</option>
+        </select>
     </div>
 </div>
 <div class="output" *ngIf="verse">
