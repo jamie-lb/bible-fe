@@ -52,12 +52,14 @@ export class HomeComponent implements OnInit {
         this.loadChapterNumbers();
     }
 
-    private loadChapterNumbers(): void {
-        this.bookChapters = [];
-        this.chapterVerses = [];
-        this.verse = undefined;
-        this.selectedChapterNumber = undefined;
-        this.selectedVerseNumber = undefined;
+    private loadChapterNumbers(selectFirst: boolean = true, selectLast: boolean = false): void {
+        if (selectFirst || selectLast) {
+            this.bookChapters = [];
+            this.chapterVerses = [];
+            this.verse = undefined;
+            this.selectedChapterNumber = undefined;
+            this.selectedVerseNumber = undefined;
+        }
         if (this.isVersionAndBookSelected()) {
             this.isBusy = true;
             const versionCode: string = this.selectedVersionCode || '';
@@ -65,8 +67,13 @@ export class HomeComponent implements OnInit {
             this.service.getBookChapters(versionCode, bookId).subscribe({
                 next: (chapters: number[]) => {
                     this.bookChapters = chapters;
-                    this.selectedChapterNumber = chapters[0].toString();
-                    this.loadChapterVerses();
+                    if (selectFirst) {
+                        this.selectedChapterNumber = chapters[0].toString();
+                        this.loadChapterVerses(selectFirst, selectLast);
+                    } else if (selectLast) {
+                        this.selectedChapterNumber = chapters[chapters.length - 1].toString();
+                        this.loadChapterVerses(selectFirst, selectLast);
+                    }
                     this.isBusy = false;
                 }, error: (error) => this.handleError(error)
             });
@@ -85,10 +92,12 @@ export class HomeComponent implements OnInit {
         this.loadChapterVerses();
     }
 
-    private loadChapterVerses(): void {
-        this.chapterVerses = [];
-        this.verse = undefined;
-        this.selectedVerseNumber = undefined;
+    private loadChapterVerses(selectFirst: boolean = true, selectLast: boolean = false): void {
+        if (selectFirst || selectLast) {
+            this.chapterVerses = [];
+            this.verse = undefined;
+            this.selectedVerseNumber = undefined;
+        }
         if (this.isVersionAndBookSelected() && (+(this.selectedChapterNumber || '0')) > 0) {
             this.isBusy = true;
             const versionCode: string = this.selectedVersionCode || '';
@@ -97,8 +106,13 @@ export class HomeComponent implements OnInit {
             this.service.getChapterVerses(versionCode, bookId, chapterNumber).subscribe({
                 next: (verseNumbers: number[]) => {
                     this.chapterVerses = verseNumbers;
-                    this.selectedVerseNumber = verseNumbers[0].toString();
-                    this.loadSelectedVerse();
+                    if (selectFirst) {
+                        this.selectedVerseNumber = verseNumbers[0].toString();
+                        this.loadSelectedVerse();
+                    } else if (selectLast) {
+                        this.selectedVerseNumber = verseNumbers[verseNumbers.length - 1].toString();
+                        this.loadSelectedVerse();
+                    }
                     this.isBusy = false;
                 }, error: (error) => this.handleError(error)
             });
@@ -130,6 +144,60 @@ export class HomeComponent implements OnInit {
     private handleError(error: any): void {
         this.isBusy = false;
         this.errorMessage = error.error;
+    }
+
+    getPreviousVerse(): void {
+        this.errorMessage = undefined;
+        if (this.verse) {
+            this.isBusy = true;
+            const versionCode: string = this.verse.version?.versionCode || '';
+            const bookId: number = this.verse.book?.id || 0;
+            const chapterNumber: number = this.verse.chapterNumber || 0;
+            const verseNumber: number = this.verse.verseNumber || 0;
+            this.service.getPreviousVerse(versionCode, bookId, chapterNumber, verseNumber).subscribe({
+                next: (verse: Verse) => {
+                    if (verse) {
+                        this.verse = verse;
+                        this.selectedBookId = this.verse.book?.id?.toString();
+                        this.selectedChapterNumber = this.verse.chapterNumber?.toString();
+                        this.selectedVerseNumber = this.verse.verseNumber?.toString();
+                        this.loadChapterNumbers(false);
+                        this.loadChapterVerses(false);
+                    } else {
+                        this.selectedBookId = this.books.filter(book => book.title === 'Revelation')[0].id?.toString();
+                        this.loadChapterNumbers(false, true);
+                    }
+                    this.isBusy = false;
+                }, error: (error) => this.handleError(error)
+            });
+        }
+    }
+
+    getNextVerse(): void {
+        this.errorMessage = undefined;
+        if (this.verse) {
+            this.isBusy = true;
+            const versionCode: string = this.verse.version?.versionCode || '';
+            const bookId: number = this.verse.book?.id || 0;
+            const chapterNumber: number = this.verse.chapterNumber || 0;
+            const verseNumber: number = this.verse.verseNumber || 0;
+            this.service.getNextVerse(versionCode, bookId, chapterNumber, verseNumber).subscribe({
+                next: (verse: Verse) => {
+                    if (verse) {
+                        this.verse = verse;
+                        this.selectedBookId = this.verse.book?.id?.toString();
+                        this.selectedChapterNumber = this.verse.chapterNumber?.toString();
+                        this.selectedVerseNumber = this.verse.verseNumber?.toString();
+                        this.loadChapterNumbers(false);
+                        this.loadChapterVerses(false);
+                    } else {
+                        this.selectedBookId = this.books.filter(book => book.title === 'Genesis')[0].id?.toString();
+                        this.loadChapterNumbers();
+                    }
+                    this.isBusy = false;
+                }, error: (error) => this.handleError(error)
+            });
+        }
     }
 
 }

@@ -38,4 +38,14 @@ export class BibleService {
         return this.http.get<Verse>(url);
     }
 
+    getPreviousVerse(versionCode: string, bookId: number, chapterNumber: number, verseNumber: number): Observable<Verse> {
+        const url: string = this.baseUrl + 'previousVerse/' + versionCode + '/' + bookId + '/' + chapterNumber + '/' + verseNumber;
+        return this.http.get<Verse>(url);
+    }
+
+    getNextVerse(versionCode: string, bookId: number, chapterNumber: number, verseNumber: number): Observable<Verse> {
+        const url: string = this.baseUrl + 'nextVerse/' + versionCode + '/' + bookId + '/' + chapterNumber + '/' + verseNumber;
+        return this.http.get<Verse>(url);
+    }
+
 }

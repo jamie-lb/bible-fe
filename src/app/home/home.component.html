@@ -9,6 +9,9 @@
         </select>
     </div>
     <div class="inputWrapper">
+        <button [disabled]="isBusy" (click)="getPreviousVerse()">Previous Verse</button>
+    </div>
+    <div class="inputWrapper">
         <label class="descriptionLabel">Book:</label>
         <select [(ngModel)]="selectedBookId" [disabled]="isBusy" (ngModelChange)="selectedBookChanged()">
             <option *ngFor="let book of books" [value]="book.id">{{ book.title }}</option>
@@ -25,6 +28,9 @@
         <select [(ngModel)]="selectedVerseNumber" [disabled]="isBusy" (ngModelChange)="verseNumberChanged()">
             <option *ngFor="let verseNumber of chapterVerses" [value]="verseNumber">{{ verseNumber }}</option>
         </select>
+    </div>
+    <div class="inputWrapper">
+        <button [disabled]="isBusy" (click)="getNextVerse()">Next Verse</button>
     </div>
 </div>
 <div class="output" *ngIf="verse">
